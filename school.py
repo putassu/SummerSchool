@@ -7,7 +7,7 @@ import sys
 import regex
 import os
 import shutil
-
+from pathlib import Path
 
 with open('credentials.txt', 'r') as f:
     host, port, database, user, password = f.readline().split('::')
@@ -53,8 +53,7 @@ def creator(row):
     location = row[1]
     enid = row['Запуск']
     name = row[0]
-    os.makedirs(os.path.dirname(f'{base_dir}/{enid}'), exist_ok=True)
-    os.makedirs(os.path.dirname(f'{base_dir}/{enid}/{iid}'), exist_ok=True)
+    Path(f'{base_dir}/{enid}/{iid}').mkdir(parents=True, exist_ok=True)
     shutil.copy2('/mnt'+location[13:], f'{base_dir}/{enid}/{iid}/{name}')
 
 
