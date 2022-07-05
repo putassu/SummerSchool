@@ -8,6 +8,8 @@ import regex
 import os
 import shutil
 from pathlib import Path
+import subprocess
+
 
 with open('credentials.txt', 'r') as f:
     host, port, database, user, password = f.readline().split('::')
@@ -43,22 +45,29 @@ df = pd.read_csv('cases.csv')
 df['IID'] = df['IID'].apply(str)
 merged = df.merge(select, how='left', on='IID')
 dff = merged[merged[1].notna()]
-dff_ = dff.iloc[:2, :]
-dff_
-dest = dff.iloc[2:, ]
+dff_ = merged[merged[1].isna()]
 
 def creator(row):
-    base_dir = '/core-pool/tmp/school'
+    base_dir = '/core-pool/tmp/summer-school'
     iid = row['IID']
     location = row[1]
     enid = row['Запуск']
     name = row[0]
-    Path(f'{base_dir}/{enid}/{iid}').mkdir(parents=True, exist_ok=True)
-    shutil.copy2('/mnt'+location[13:], f'{base_dir}/{enid}/{iid}/{name}')
+    Path(f'{base_dir}/{iid}').mkdir(parents=True, exist_ok=True)
+    shutil.copy2('/mnt'+location[13:], f'{base_dir}/{iid}/{name}')
     print(f'success copy {name}')
 
 
-dest.apply(creator, axis=1)
+dff.apply(creator, axis=1)
+
+# def locate_creator(row):
+#     base_dir = '/core-pool/tmp/summer-school'
+#     iid = row['IID']
+#     name = row[0]
+#     Path(f'{base_dir}/{iid}').mkdir(parents=True, exist_ok=True)
+#     shutil.copy2('/mnt' + location[13:], f'{base_dir}/{iid}/{name}')
+#     print(f'success copy {name}')
+
 
 # os.mkdir('/core-pool/tmp/school/100041')
 # import subprocess
@@ -66,5 +75,4 @@ dest.apply(creator, axis=1)
 # subprocess.call('mkdir 100041', shell=True)
 
 
-
-
+dff_.apply(locate_creator, axis=1)
