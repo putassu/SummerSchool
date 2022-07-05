@@ -43,9 +43,9 @@ df = pd.read_csv('cases.csv')
 df['IID'] = df['IID'].apply(str)
 merged = df.merge(select, how='left', on='IID')
 dff = merged[merged[1].notna()]
-dff_ = dff.iloc[:2,:]
+dff_ = dff.iloc[:2, :]
 dff_
-
+dest = dff.iloc[2:, ]
 
 def creator(row):
     base_dir = '/core-pool/tmp/school'
@@ -55,9 +55,10 @@ def creator(row):
     name = row[0]
     Path(f'{base_dir}/{enid}/{iid}').mkdir(parents=True, exist_ok=True)
     shutil.copy2('/mnt'+location[13:], f'{base_dir}/{enid}/{iid}/{name}')
+    print(f'success copy {name}')
 
 
-dff_.apply(creator, axis=1)
+dest.apply(creator, axis=1)
 
 # os.mkdir('/core-pool/tmp/school/100041')
 # import subprocess
